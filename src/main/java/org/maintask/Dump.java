@@ -22,25 +22,25 @@ public class Dump implements Runnable {
     }
 
     public void addSomeNewDetail() {
+        int index = secureRandom.nextInt(detailsPerNight);
         synchronized (details) {
-            int index = secureRandom.nextInt(detailsPerNight);
             IntStream.range(0, index).forEach(i -> details.add(Factory.createRandomDetail()));
-            System.out.println("Daily bunch of detail was added. Total: " + details.size());
         }
+        System.out.println("Daily bunch of detail was added. Total: " + details.size());
     }
 
     public List<Detail> getSomeDetail() {
+        List<Detail> out = new ArrayList<>();
+        int count = Math.min(details.size(), detailsPerNight);
+        int randomCount = secureRandom.nextInt(count);
         synchronized (details) {
-            List<Detail> out = new ArrayList<>();
-            int count = Math.min(details.size(), detailsPerNight);
-            int randomCount = secureRandom.nextInt(count);
             for (int j = 0; j < randomCount; j++) {
                 Detail detail = details.stream().findAny().get();
                 out.add(detail);
                 details.remove(detail);
             }
-            return out;
         }
+        return out;
     }
 
 

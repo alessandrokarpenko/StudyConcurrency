@@ -30,28 +30,3 @@ HDD
 Для симуляции принять, что каждая ночь наступает через 100мс.
 Фабрика и два прислужника действуют в одно и то же время.
 После 100 ночей (около 10 секунд) определить победителя соревнования.
-
-
-Objects:
-
-Application - main()
-
-Scientist
-    Assistant
-        
-
-Robot
-detais:
-    head
-    leftArm
-    rightArm
-    leftLeg
-    rightLeg
-    body
-    cpu
-    ram
-    hdd
-
-factory
-
-dump
