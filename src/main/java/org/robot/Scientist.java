@@ -1,35 +1,38 @@
 package org.robot;
 
-import org.maintask.Dump;
+import java.util.List;
+import java.util.concurrent.Callable;
 
 public class Scientist {
 
     private String name;
-    private Dump dump;
+    private Assistant assistant;
+    int iteration = 0;
+    int robotCount = 0;
+    private final List<Detail> necessaryParts = List.of(Detail.HEAD, Detail.LEFT_HAND, Detail.RIGHT_HAND, Detail.BODY,
+            Detail.LEFT_LEG, Detail.LEFT_LEG, Detail.HDD, Detail.CPU, Detail.RAM);
 
-    public Scientist(String name, Dump dump) {
+    public Scientist(String name, Assistant assistant) {
         this.name = name;
-        this.dump = dump;
+        this.assistant = assistant;
     }
 
-    public Assistant getAssistant() {
-        return new Assistant(name);
+    public void tryToBuildRobot() {
+
     }
 
+    public Callable<Void> execute() {
+        return new Scientist.Executor();
+    }
 
-    public class Assistant implements Runnable {
-
-        private String name;
-
-        public Assistant(String name) {
-            this.name = name + " -> Assistant";
-        }
+    class Executor implements Callable<Void> {
 
         @Override
-        public void run() {
-            while (true) {
-
-            }
+        public Void call() throws Exception {
+            tryToBuildRobot();
+            iteration++;
+            return null;
         }
     }
+
 }

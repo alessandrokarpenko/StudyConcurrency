@@ -4,44 +4,52 @@ package org.robot;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.stream.IntStream;
 
-public class Dump implements Runnable {
+public class Dump {
 
-    private final String name = "Dump";
-    private final List<Detail> availableDetails;
-    private final int startedDetailCount = 20;
+    String name = "Dump";
+    int iteration = 0;
+    List<Detail> details;
+    private final int starterDetailCount = 20;
     private final int detailsPerNight = 4;
     private final SecureRandom random = new SecureRandom();
-    private int iteration = 0;
-
-    public boolean doIteration = false;
 
     public Dump() {
-        availableDetails = new ArrayList<>();
-        IntStream.range(0, startedDetailCount).forEach(i -> availableDetails.add(Detail.getRandomDetail()));
-        System.out.println("First bunch of detail was added. Total: " + availableDetails.size());
+        details = new ArrayList<>();
+        addStarterPack();
     }
 
-    public List<Detail> getSomeDetails() {
-        return null;
+    public List<Detail> getDetails() {
+        return details;
     }
 
-    public void addSomeDetails() {
-
+    private void addStarterPack() {
+        IntStream.range(1, starterDetailCount + 1).forEach(x -> details.add(Detail.getRandomDetail()));
+        System.out.printf("%s --- default set of details was added to dump. Count: %s\n", this.name, details.size());
     }
 
-    @Override
-    public void run() {
-        while (true) {
-            try {
-                synchronized (this) {
-                    wait();
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            System.out.println(String.format("%s -> iteration #%s", name, iteration++));
+    public Callable<Void> execute() {
+        return new Executor();
+    }
+
+    public void addNightDetails() {
+        int ranCount = random.nextInt(detailsPerNight);
+        synchronized (details) {
+            IntStream.range(0, ranCount + 1).forEach(x -> details.add(Detail.getRandomDetail()));
+        }
+        System.out.printf("%s --- step %s --- %s details were added. Count: %s\n", this.name, iteration, ranCount + 1, details.size());
+    }
+
+    class Executor implements Callable<Void> {
+
+        @Override
+        public Void call() throws Exception {
+            addNightDetails();
+            iteration++;
+            return null;
         }
     }
 

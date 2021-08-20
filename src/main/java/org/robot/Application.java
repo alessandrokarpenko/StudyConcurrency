@@ -1,25 +1,32 @@
 package org.robot;
 
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class Application {
 
-    private static final int nights = 100;
+    private static final int nights = 20;
 
-    public static void main(String[] args) throws InterruptedException {
+    public void doIt() throws InterruptedException {
 
-
-        Application application = new Application();
         Dump dump = new Dump();
-        Thread threadD = new Thread(dump);
-        threadD.start();
+        Assistant assistant1 = new Assistant("ass1", dump);
+        Assistant assistant2 = new Assistant("ass2", dump);
+        Scientist scientist1 = new Scientist("sc1", assistant1);
+        Scientist scientist2 = new Scientist("sc2", assistant2);
 
         for (int i = 0; i < nights; i++) {
-            synchronized (dump) {
-                System.out.println(String.format("----------------------%s day----------------------", i));
-                synchronized (dump) {
-                    dump.notifyAll();
-                }
-            }
+            System.out.printf("----------------%s day----------------\n", i);
+            ExecutorService executorService = Executors.newFixedThreadPool(3);
+            executorService.invokeAll(List.of(dump.execute(), assistant1.execute(), assistant2.execute(),
+                    scientist1.execute(), scientist2.execute()));
+            executorService.shutdown();
+            Thread.sleep(100);
         }
+    }
 
+    public static void main(String[] args) throws InterruptedException {
+        new Application().doIt();
     }
 }
