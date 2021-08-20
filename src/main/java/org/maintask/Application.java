@@ -2,7 +2,6 @@ package org.maintask;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -28,10 +27,10 @@ public class Application {
 
         ExecutorService executorService = Executors.newFixedThreadPool(3);
 
-        executorService.submit(d);
+
         executorService.submit(sc1);
         executorService.submit(sc2);
-
+        executorService.submit(d);
 
         executorService.shutdown();
 

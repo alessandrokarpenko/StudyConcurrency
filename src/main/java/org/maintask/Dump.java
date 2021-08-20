@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static java.lang.Thread.sleep;
-
 public class Dump implements Runnable {
 
     private final String name = "dump";
