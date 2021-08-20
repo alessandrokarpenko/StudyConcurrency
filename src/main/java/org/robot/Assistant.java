@@ -3,23 +3,27 @@ package org.robot;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.Callable;
+import java.util.concurrent.*;
 
 public class Assistant {
 
     private Dump dump;
-    String name;
+    private String name;
     private int iteration = 0;
     private List<Detail> details;
     private final int detailsPerNight = 4;
     private final SecureRandom random = new SecureRandom();
-
+    private ResettableCountDownLatch resettableCountDownLatch;
 
     public Assistant(String name, Dump dump) {
         this.name = name;
         this.dump = dump;
         details = new ArrayList<>();
+        resettableCountDownLatch = new ResettableCountDownLatch(1);
+    }
+
+    public List<Detail> getDetails() {
+        return details;
     }
 
     public void tryToGrabSomeDetails() {
@@ -45,12 +49,17 @@ public class Assistant {
         return new Assistant.Executor();
     }
 
+    public ResettableCountDownLatch getResettableCountDownLatch() {
+        return resettableCountDownLatch;
+    }
+
     class Executor implements Callable<Void> {
 
         @Override
         public Void call() throws Exception {
             tryToGrabSomeDetails();
             iteration++;
+            resettableCountDownLatch.countDown();
             return null;
         }
     }
